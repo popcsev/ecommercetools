@@ -104,8 +104,9 @@ def get_previous_value(df, group_column, value_column):
     """
 
     df = df.copy()
-    df = df.sort_values(by=[value_column], ascending=False)
-    return df.groupby([group_column])[value_column].shift(-1)
+    df = df.sort_values(by=[value_column], ascending=True)
+    previous = df.groupby([group_column])[value_column].shift(1)
+    return previous.sort_index()
 
 
 def get_days_since_date(df, before_datetime, after_datetime):
