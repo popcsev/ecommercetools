@@ -1,0 +1,10 @@
+{
+  "US": "properties/123456789",
+  "UK": "properties/987654321",
+  "DE": "properties/111222333",
+  "FR": "properties/444555666",
+  "ES": "properties/777888999",
+  "IT": "properties/101112131",
+  "CA": "properties/141516171",
+  "AU": "properties/181920212"
+}

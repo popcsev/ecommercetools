@@ -11,15 +11,13 @@ setup(
     packages=find_namespace_packages(include=['ecommercetools.*']),
     version='0.42.8',
     license='MIT',
-    description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and Python SEO.',
+    description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and Python SEO. Fork with GA4 Analytics.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='Matt Clarke',
-    author_email='matt@practicaldatascience.co.uk',
-    url='https://github.com/practical-data-science/ecommercetools',
-    download_url='https://github.com/practical-data-science/ecommercetools/archive/master.zip',
+    url='https://github.com/popcsev/ecommercetools',
+    download_url='https://github.com/popcsev/ecommercetools/archive/master.zip',
     keywords=['ecommerce', 'marketing', 'seo', 'seo testing', 'customers', 'products', 'rfm', 'abc',
-              'operations', 'analytics', 'python', 'python seo', 'pandas', 'nlp', 'causal impact'],
+              'operations', 'analytics', 'python', 'python seo', 'pandas', 'nlp', 'causal impact', 'ga4', 'google analytics'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -28,7 +26,6 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=['pandas>=1.4.0,<2.0.0',
-                      'gapandas',
                       'scikit-learn',
                       'requests',
                       'requests_html',
@@ -37,5 +34,6 @@ setup(
                       'transformers',
                       'torch',
                       'pycausalimpact',
-                      'numpy']
+                      'numpy',
+                      'google-analytics-data>=0.16.0']
 )
