@@ -5,26 +5,7 @@ A very primitive and slow web scraper for SEO tasks on small websites
 import requests
 import urllib.parse
 import pandas as pd
-from requests_html import HTMLSession
-
-
-def _get_source(url: str):
-    """Return the source code for the provided URL.
-
-    Args:
-        url (string): URL of the page to scrape.
-
-    Returns:
-        response (object): HTTP response object from requests_html.
-    """
-
-    try:
-        session = HTMLSession()
-        response = session.get(url)
-        return response
-
-    except requests.exceptions.RequestException as e:
-        print(e)
+from ecommercetools.utilities.http import get_source as _get_source
 
 
 def _get_title(response):
@@ -154,8 +135,7 @@ def scrape_site(df, url='loc', verbose=False):
 
         print('Preparing to scrape ' + str(pages) + ' pages. This will take approximately ' + str(round(minutes)) + ' minutes')
 
-    df_pages = pd.DataFrame(columns=['url', 'title', 'description', 'canonical', 'robots', 'hreflang', 'generator',
-                                     'absolute_links', 'paragraphs'])
+    pages_list = []
 
     for index, row in df.iterrows():
 
@@ -166,7 +146,7 @@ def scrape_site(df, url='loc', verbose=False):
 
         if response:
             with response as r:
-                row = {
+                page_data = {
                     'url': row[url],
                     'title': _get_title(r),
                     'description': _get_description(r),
@@ -178,7 +158,8 @@ def scrape_site(df, url='loc', verbose=False):
                     'paragraphs': _get_paragraphs(r),
                 }
 
-                df_pages = df_pages.append(row, ignore_index=True)
+                pages_list.append(page_data)
 
+    df_pages = pd.DataFrame(pages_list)
     return df_pages
 

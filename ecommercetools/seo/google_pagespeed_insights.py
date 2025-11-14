@@ -32,8 +32,7 @@ def query_core_web_vitals(key: str,
         data = json.loads(response)
         return data
     except Exception as e:
-        print("Error: ", e)
-        sys.exit(1)
+        raise RuntimeError(f"Error querying PageSpeed Insights API: {e}")
 
 
 def save_core_web_vitals(report: dict,
@@ -104,9 +103,7 @@ def get_core_web_vitals(key: str,
         df (dataframe): Pandas dataframe containing core web vitals for URL and strategy.
     """
 
-    df = pd.DataFrame(columns=['final_url', 'fetch_time', 'form_factor', 'overall_score',
-                               'speed_index', 'first_meaningful_paint', 'first_contentful_paint',
-                               'time_to_interactive', 'total_blocking_time', 'cumulative_layout_shift'])
+    data_list = []
 
     if strategy == "both":
 
@@ -114,20 +111,21 @@ def get_core_web_vitals(key: str,
             report = query_core_web_vitals(key, url, strategy="mobile")
             if report:
                 data = parse_core_web_vitals(report)
-                df = df.append(data, ignore_index=True)
+                data_list.append(data)
 
         for url in urls:
             report = query_core_web_vitals(key, url, strategy="desktop")
             if report:
                 data = parse_core_web_vitals(report)
-                df = df.append(data, ignore_index=True)
+                data_list.append(data)
 
     else:
         for url in urls:
             report = query_core_web_vitals(key, url, strategy=strategy)
             if report:
                 data = parse_core_web_vitals(report)
-                df = df.append(data, ignore_index=True)
+                data_list.append(data)
 
+    df = pd.DataFrame(data_list)
     df = df.sort_values(by='final_url')
     return df

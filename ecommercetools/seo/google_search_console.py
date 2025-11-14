@@ -26,8 +26,7 @@ def _connect(key: str):
         return service
 
     except Exception as e:
-        print("Error: ", e)
-        sys.exit(1)
+        raise RuntimeError(f"Error connecting to Google Search Console API: {e}")
 
 
 def _get_response(service, site_url, payload):

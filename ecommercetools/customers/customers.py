@@ -91,19 +91,19 @@ def _label_rfm_segments(rfm):
 
     rfm = int(rfm)
 
-    if (rfm >= 111) & (rfm <= 155):
+    if (rfm >= 111) and (rfm <= 155):
         return 'Risky'
 
-    elif (rfm >= 211) & (rfm <= 255):
+    elif (rfm >= 211) and (rfm <= 255):
         return 'Hold and improve'
 
-    elif (rfm >= 311) & (rfm <= 353):
+    elif (rfm >= 311) and (rfm <= 353):
         return 'Potential loyal'
 
-    elif ((rfm >= 354) & (rfm <= 454)) or ((rfm >= 511) & (rfm <= 535)) or (rfm == 541):
+    elif ((rfm >= 354) and (rfm <= 454)) or ((rfm >= 511) and (rfm <= 535)) or (rfm == 541):
         return 'Loyal'
 
-    elif (rfm == 455) or (rfm >= 542) & (rfm <= 555):
+    elif (rfm == 455) or ((rfm >= 542) and (rfm <= 555)):
         return 'Star'
 
     else:
@@ -208,7 +208,7 @@ def get_abc_segments(customers,
     lapsed = customers[customers['recency'] > (months * 30)]
 
     # Return ABC segments
-    abc = purchased.append(lapsed)
+    abc = pd.concat([purchased, lapsed], ignore_index=False)
     abc[abc_class_name].fillna('D', inplace=True)
     abc[abc_rank_name].fillna(len(purchased) + 1, inplace=True)
     abc = abc[['customer_id', abc_class_name, abc_rank_name]]

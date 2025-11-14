@@ -77,7 +77,7 @@ def _sitemap_to_dataframe(xml: str, name=None, verbose=False):
         dataframe: Pandas dataframe of XML sitemap content.
     """
 
-    df = pd.DataFrame(columns=['loc', 'changefreq', 'priority', 'domain', 'sitemap_name'])
+    rows_list = []
 
     urls = xml.find_all("url")
 
@@ -117,7 +117,9 @@ def _sitemap_to_dataframe(xml: str, name=None, verbose=False):
         if verbose:
             print(row)
 
-        df = df.append(row, ignore_index=True)
+        rows_list.append(row)
+
+    df = pd.DataFrame(rows_list)
     return df
 
 
