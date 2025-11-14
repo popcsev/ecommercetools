@@ -28,7 +28,6 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=['pandas>=1.4.0,<2.0.0',
-                      'gapandas',
                       'scikit-learn',
                       'requests',
                       'requests_html',
