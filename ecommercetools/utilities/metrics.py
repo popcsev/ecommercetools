@@ -279,7 +279,7 @@ def product_consumption_rate(total_items, total_orders):
         Average number of units per order.
     """
 
-    return (total_items / total_orders) * 100
+    return total_items / total_orders
 
 
 def brand_usage(number_of_brand_purchasers, total_purchasers):
