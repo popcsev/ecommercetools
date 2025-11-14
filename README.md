@@ -2,11 +2,25 @@
 
 ![EcommerceTools](https://github.com/practical-data-science/ecommercetools/blob/master/banner.png?raw=true)
 
-EcommerceTools is a data science toolkit for those working in technical ecommerce, marketing science, and technical seo and includes a wide range of features to aid analysis and model building. The package is written in Python and is designed to be used with Pandas and works within a Jupyter notebook environment or in standalone Python projects. 
+EcommerceTools is a data science toolkit for those working in technical ecommerce, marketing science, and technical seo and includes a wide range of features to aid analysis and model building. The package is written in Python and is designed to be used with Pandas and works within a Jupyter notebook environment or in standalone Python projects.
+
+**This is a fork** with additional features including GA4 Analytics support for multi-country setups.
 
 #### Installation
 
-You can install EcommerceTools and its dependencies via PyPi by entering `pip3 install ecommercetools` in your terminal, or `!pip3 install ecommercetools` within a Jupyter notebook cell. 
+Clone this repository and install locally:
+
+```bash
+git clone https://github.com/popcsev/ecommercetools.git
+cd ecommercetools
+pip install -e .
+```
+
+Or install directly from GitHub:
+
+```bash
+pip install git+https://github.com/popcsev/ecommercetools.git
+```
 
 ---
 
@@ -21,6 +35,42 @@ You can install EcommerceTools and its dependencies via PyPi by entering `pip3 i
 - [NLP](#NLP)
 - [SEO](#SEO)
 - [Reports](#Reports)
+- [Analytics (GA4)](#Analytics) - **NEW**
+---
+
+### Analytics
+
+**NEW:** GA4 Analytics module for multi-country e-commerce setups.
+
+#### Multi-Country GA4 Setup
+
+For setups where each GA4 property represents a different country website:
+
+```python
+from ecommercetools import analytics
+
+# Get summary for all countries
+summary = analytics.create_multi_country_summary(
+    credentials_path='service_account.json',
+    config_path='ga4_properties.json',
+    start_date='30daysAgo',
+    end_date='yesterday'
+)
+
+print(summary)
+```
+
+**Configuration file** (`ga4_properties.json`):
+```json
+{
+  "US": "properties/123456789",
+  "UK": "properties/987654321",
+  "DE": "properties/111222333"
+}
+```
+
+See [GA4_REPORTS.md](GA4_REPORTS.md) for complete documentation and examples.
+
 ---
 
 ### Transactions

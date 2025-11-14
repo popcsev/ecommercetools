@@ -474,4 +474,4 @@ except Exception as e:
 - Combine GA4 data with other ecommercetools modules (customers, products, transactions)
 - Schedule automated reports using cron or Airflow
 
-For more information, see the [ecommercetools documentation](https://github.com/practical-data-science/ecommercetools).
+For more information, see the [ecommercetools repository](https://github.com/popcsev/ecommercetools).
