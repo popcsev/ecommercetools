@@ -37,5 +37,6 @@ setup(
                       'transformers',
                       'torch',
                       'pycausalimpact',
-                      'numpy']
+                      'numpy',
+                      'google-analytics-data>=0.16.0']
 )

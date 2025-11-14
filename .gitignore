@@ -7,3 +7,5 @@ ecommercetools.egg-info
 google-search-console.json
 pds-client-secrets.json
 example-test.py
+ga4_properties.json
+*service_account*.json
