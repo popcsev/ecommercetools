@@ -7,33 +7,7 @@ import requests
 import urllib.parse
 import pandas as pd
 import numpy as np
-from requests_html import HTMLSession
-
-
-def _get_source(url: str):
-    """Return the source code for the provided URL.
-
-    Args:
-        url (string): URL of the page to scrape.
-
-    Returns:
-        response (object): HTTP response object from requests_html.
-    """
-
-    try:
-        session = HTMLSession()
-        response = session.get(url)
-
-        if response.status_code == 200:
-            return response
-        elif response.status_code == 429:
-            print('Error: Too many requests. Google has temporarily blocked you. Try again later.')
-            exit()
-        else:
-            print('Error:' + response)
-            exit()
-    except requests.exceptions.RequestException as e:
-        print(e)
+from ecommercetools.utilities.http import get_source as _get_source
 
 
 def _get_site_results(url: str):

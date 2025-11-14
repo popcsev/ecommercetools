@@ -6,25 +6,7 @@ import requests
 import urllib.parse
 import json
 import pandas as pd
-from requests_html import HTMLSession
-
-
-def _get_source(url: str):
-    """Return the source code for the provided URL.
-
-    Args:
-        url (string): URL of the page to scrape.
-
-    Returns:
-        response (object): HTTP response object from requests_html.
-    """
-
-    try:
-        session = HTMLSession()
-        response = session.get(url)
-        return response
-    except requests.exceptions.RequestException as e:
-        print(e)
+from ecommercetools.utilities.http import get_source as _get_source
 
 
 def get_sitemaps(url: str):
