@@ -1,0 +1,40 @@
+from setuptools import setup
+from setuptools import find_namespace_packages
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
+setup(
+    name='ecommercetools',
+    packages=find_namespace_packages(include=['ecommercetools.*']),
+    version='0.42.8',
+    license='MIT',
+    description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and Python SEO. Fork with GA4 Analytics.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/popcsev/ecommercetools',
+    download_url='https://github.com/popcsev/ecommercetools/archive/master.zip',
+    keywords=['ecommerce', 'marketing', 'seo', 'seo testing', 'customers', 'products', 'rfm', 'abc',
+              'operations', 'analytics', 'python', 'python seo', 'pandas', 'nlp', 'causal impact', 'ga4', 'google analytics'],
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.6',
+    ],
+    install_requires=['pandas>=1.4.0,<2.0.0',
+                      'scikit-learn',
+                      'requests',
+                      'requests_html',
+                      'httplib2 >= 0.15.0',
+                      'lifetimes',
+                      'transformers',
+                      'torch',
+                      'pycausalimpact',
+                      'numpy',
+                      'google-analytics-data>=0.16.0',
+                      'mlxtend>=0.23.0']
+)

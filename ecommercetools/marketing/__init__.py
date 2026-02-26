@@ -1,0 +1,6 @@
+from ecommercetools.marketing.marketing import get_trading_events
+from ecommercetools.marketing.marketing import get_trading_calendar
+from ecommercetools.marketing.marketing import create_basket_matrix
+from ecommercetools.marketing.marketing import get_frequent_itemsets
+from ecommercetools.marketing.marketing import get_association_rules
+
