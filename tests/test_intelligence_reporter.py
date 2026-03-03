@@ -1,7 +1,7 @@
 """Tests for ecommercetools.intelligence.reporter"""
 import tempfile
 from pathlib import Path
-from ecommercetools.intelligence.reporter import build_metrics_table, generate_report
+from ecommercetools.intelligence.reporter import build_anomalies_section, build_metrics_table, generate_report
 
 
 def _sample_analysis():
@@ -58,3 +58,14 @@ def test_generate_report_html_is_valid():
         html = (base / "weekly" / "2026-W09" / "report.html").read_text()
         assert "<html>" in html
         assert "UK" in html
+
+
+def test_build_anomalies_section_with_anomalies():
+    analysis = _sample_analysis()
+    analysis["anomalies"] = [
+        {"country": "UK", "metric": "revenue", "direction": "down", "pct": -18.2}
+    ]
+    result = build_anomalies_section(analysis)
+    assert "UK" in result
+    assert "-18.2%" in result
+    assert "🔴" in result

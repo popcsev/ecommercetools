@@ -32,8 +32,8 @@ def build_anomalies_section(analysis: Dict[str, Any]) -> str:
         return "_No significant anomalies this week._"
     lines = []
     for a in analysis["anomalies"]:
-        icon = "up" if a["direction"] == "up" else "down"
-        lines.append(f"- [{icon}] **{a['country']}** {a['metric']} {a['pct']:+.1f}% vs last week")
+        icon = "🟢" if a["direction"] == "up" else "🔴"
+        lines.append(f"- {icon} **{a['country']}** {a['metric']} {a['pct']:+.1f}% vs last week")
     return "\n".join(lines)
 
 
