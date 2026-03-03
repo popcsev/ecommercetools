@@ -1,8 +1,12 @@
 """Compare weekly snapshots and detect trends and anomalies."""
 
-import pandas as pd
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Dict, Any, Optional
+
+import pandas as pd
+
+from ecommercetools.intelligence.snapshots import load_snapshot, REPORTS_DIR, get_week_date_range, get_week_label
 
 METRICS = ["sessions", "users", "revenue", "transactions", "conversion_rate", "avg_order_value"]
 
@@ -34,9 +38,6 @@ def compute_wow_diff(current: pd.DataFrame, previous: pd.DataFrame) -> Dict[str,
     return result
 
 
-from ecommercetools.intelligence.snapshots import load_snapshot, REPORTS_DIR, get_week_date_range
-
-
 def detect_anomalies(wow: Dict, threshold: float = 15.0) -> list:
     """Flag metrics where % change exceeds threshold.
 
@@ -65,8 +66,9 @@ def analyse_week(week_label: str, base_dir: Path = REPORTS_DIR, anomaly_threshol
     """
     current = load_snapshot(week_label, "summary", base_dir)
 
-    year, wnum = int(week_label[:4]), int(week_label[6:])
-    prev_week = f"{year}-W{wnum - 1:02d}" if wnum > 1 else f"{year - 1}-W52"
+    current_start, _ = get_week_date_range(week_label)
+    prev_start = current_start - timedelta(days=7)
+    prev_week = get_week_label(prev_start)
 
     try:
         previous = load_snapshot(prev_week, "summary", base_dir)
@@ -77,14 +79,10 @@ def analyse_week(week_label: str, base_dir: Path = REPORTS_DIR, anomaly_threshol
     # Load up to 8 weeks of history for rolling context
     history = []
     for offset in range(1, 9):
-        w = wnum - offset
-        y = year
-        if w < 1:
-            w += 52
-            y -= 1
-        wlabel = f"{y}-W{w:02d}"
+        hist_start = current_start - timedelta(days=7 * offset)
+        hist_label = get_week_label(hist_start)
         try:
-            history.append(load_snapshot(wlabel, "summary", base_dir))
+            history.append(load_snapshot(hist_label, "summary", base_dir))
         except FileNotFoundError:
             break
 
@@ -100,7 +98,6 @@ def analyse_week(week_label: str, base_dir: Path = REPORTS_DIR, anomaly_threshol
     winners = [{"country": c, "metric": "sessions", "pct": p} for c, p in sorted_wow[:3] if p > 0]
     losers = [{"country": c, "metric": "sessions", "pct": p} for c, p in sorted_wow[-3:] if p < 0]
 
-    from datetime import date
     start, end = get_week_date_range(week_label)
 
     return {
