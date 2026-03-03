@@ -58,7 +58,7 @@ def add_transactions(week_label: str, df: pd.DataFrame) -> pd.DataFrame:
 def collect_weekly_snapshot(
     credentials_path: str,
     config_path: str,
-    week_label: str = None,
+    week_label: Optional[str] = None,
     base_dir: Path = REPORTS_DIR,
     countries: Optional[List[str]] = None,
 ) -> str:
@@ -110,10 +110,9 @@ def collect_weekly_snapshot(
         "totalRevenue": "revenue",
         "averagePurchaseRevenue": "avg_order_value",
     }, inplace=True)
-    if summary_df["sessions"].sum() > 0:
-        summary_df["conversion_rate"] = (
-            summary_df["transactions"] / summary_df["sessions"] * 100
-        ).round(2)
+    summary_df["conversion_rate"] = (
+        (summary_df["transactions"] / summary_df["sessions"].replace(0, float("nan"))) * 100
+    ).fillna(0.0).round(2)
     summary_df = add_transactions(week_label, summary_df)
     save_snapshot(summary_df, week_label, "summary", base_dir)
 
