@@ -25,3 +25,29 @@ def test_get_week_date_range_week01():
     start, end = get_week_date_range("2026-W01")
     assert start == date(2025, 12, 29)
     assert end == date(2026, 1, 4)
+
+
+import tempfile
+from pathlib import Path
+from ecommercetools.intelligence.snapshots import get_snapshot_dir, snapshot_exists
+
+
+def test_get_snapshot_dir_returns_correct_path():
+    base = Path("/tmp/reports")
+    result = get_snapshot_dir("2026-W09", base_dir=base)
+    assert result == Path("/tmp/reports/snapshots/2026-W09")
+
+
+def test_snapshot_exists_false_when_dir_missing():
+    with tempfile.TemporaryDirectory() as tmp:
+        base = Path(tmp)
+        assert snapshot_exists("2026-W09", base_dir=base) is False
+
+
+def test_snapshot_exists_true_when_summary_parquet_present():
+    with tempfile.TemporaryDirectory() as tmp:
+        base = Path(tmp)
+        snap_dir = base / "snapshots" / "2026-W09"
+        snap_dir.mkdir(parents=True)
+        (snap_dir / "summary.parquet").touch()
+        assert snapshot_exists("2026-W09", base_dir=base) is True

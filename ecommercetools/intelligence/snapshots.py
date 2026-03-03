@@ -20,5 +20,18 @@ def get_week_date_range(week_label: str) -> Tuple[date, date]:
     return monday, sunday
 
 
+REPORTS_DIR = Path(__file__).parent.parent.parent / "reports"
+
+
+def get_snapshot_dir(week_label: str, base_dir: Path = REPORTS_DIR) -> Path:
+    """Return path to snapshot directory for a given week."""
+    return base_dir / "snapshots" / week_label
+
+
+def snapshot_exists(week_label: str, base_dir: Path = REPORTS_DIR) -> bool:
+    """Return True if summary snapshot already exists for this week."""
+    return (get_snapshot_dir(week_label, base_dir) / "summary.parquet").exists()
+
+
 def collect_weekly_snapshot(*args, **kwargs):
     pass
