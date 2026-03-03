@@ -34,5 +34,83 @@ def compute_wow_diff(current: pd.DataFrame, previous: pd.DataFrame) -> Dict[str,
     return result
 
 
-def analyse_week(*args, **kwargs):
-    pass
+from ecommercetools.intelligence.snapshots import load_snapshot, REPORTS_DIR, get_week_date_range
+
+
+def detect_anomalies(wow: Dict, threshold: float = 15.0) -> list:
+    """Flag metrics where % change exceeds threshold.
+
+    Returns:
+        list of dicts: [{country, metric, direction, pct}]
+    """
+    anomalies = []
+    for country, metrics in wow.items():
+        for metric, pct in metrics.items():
+            if pct is None:
+                continue
+            if abs(pct) >= threshold:
+                anomalies.append({
+                    "country": country,
+                    "metric": metric,
+                    "direction": "up" if pct > 0 else "down",
+                    "pct": pct,
+                })
+    return anomalies
+
+
+def analyse_week(week_label: str, base_dir: Path = REPORTS_DIR, anomaly_threshold: float = 15.0) -> Dict[str, Any]:
+    """Load snapshots for this week and recent history, compute full analysis.
+
+    Returns structured dict consumed by narrator.py.
+    """
+    current = load_snapshot(week_label, "summary", base_dir)
+
+    year, wnum = int(week_label[:4]), int(week_label[6:])
+    prev_week = f"{year}-W{wnum - 1:02d}" if wnum > 1 else f"{year - 1}-W52"
+
+    try:
+        previous = load_snapshot(prev_week, "summary", base_dir)
+        wow = compute_wow_diff(current, previous)
+    except FileNotFoundError:
+        wow = {}
+
+    # Load up to 8 weeks of history for rolling context
+    history = []
+    for offset in range(1, 9):
+        w = wnum - offset
+        y = year
+        if w < 1:
+            w += 52
+            y -= 1
+        wlabel = f"{y}-W{w:02d}"
+        try:
+            history.append(load_snapshot(wlabel, "summary", base_dir))
+        except FileNotFoundError:
+            break
+
+    anomalies = detect_anomalies(wow, threshold=anomaly_threshold)
+
+    # Winners = countries with biggest positive sessions WoW
+    # Losers = countries with biggest negative sessions WoW
+    sorted_wow = sorted(
+        [(c, m.get("sessions")) for c, m in wow.items() if m.get("sessions") is not None],
+        key=lambda x: x[1],
+        reverse=True,
+    )
+    winners = [{"country": c, "metric": "sessions", "pct": p} for c, p in sorted_wow[:3] if p > 0]
+    losers = [{"country": c, "metric": "sessions", "pct": p} for c, p in sorted_wow[-3:] if p < 0]
+
+    from datetime import date
+    start, end = get_week_date_range(week_label)
+
+    return {
+        "week": week_label,
+        "date_range": {"start": str(start), "end": str(end)},
+        "current_summary": current.to_dict(orient="records"),
+        "vs_last_week": wow,
+        "history_weeks": len(history),
+        "history_summary": pd.concat(history).to_dict(orient="records") if history else [],
+        "anomalies": anomalies,
+        "winners": winners,
+        "losers": losers,
+    }
