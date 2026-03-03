@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--countries", default=None, help="Comma-separated country list")
     args = parser.parse_args()
 
-    countries = args.countries.split(",") if args.countries else None
+    countries = [c.strip() for c in args.countries.split(",")] if args.countries else None
 
     print("Step 1/4: Collecting GA4 snapshot...")
     week_label = collect_weekly_snapshot(

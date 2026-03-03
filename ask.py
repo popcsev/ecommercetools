@@ -11,6 +11,8 @@ Optional:
 """
 
 import argparse
+import re
+import sys
 from pathlib import Path
 from ecommercetools.intelligence.snapshots import REPORTS_DIR, load_snapshot
 from ecommercetools.intelligence.narrator import answer_question
@@ -21,7 +23,11 @@ def load_all_snapshots(base_dir: Path, max_weeks: int = 12) -> list:
     snap_base = base_dir / "snapshots"
     if not snap_base.exists():
         return []
-    week_dirs = sorted(snap_base.iterdir(), reverse=True)[:max_weeks]
+    _WEEK_RE = re.compile(r"^\d{4}-W\d{2}$")
+    week_dirs = sorted(
+        (d for d in snap_base.iterdir() if d.is_dir() and _WEEK_RE.match(d.name)),
+        reverse=True,
+    )[:max_weeks]
     records = []
     for d in week_dirs:
         if d.is_dir():
@@ -45,8 +51,8 @@ def main():
     snapshots = load_all_snapshots(REPORTS_DIR, max_weeks=args.weeks)
 
     if not snapshots:
-        print("No snapshots found. Run run_weekly_report.py first to collect data.")
-        return
+        print("No snapshots found. Run run_weekly_report.py first to collect data.", file=sys.stderr)
+        sys.exit(1)
 
     print(f"Loaded {len(snapshots)} records across {args.weeks} weeks.\n")
     answer = answer_question(args.question, snapshots, project_id=args.project, region=args.region)
