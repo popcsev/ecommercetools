@@ -10,12 +10,6 @@ MODEL = "claude-sonnet-4-6@20251001"
 def _get_client(project_id: str, region: str = "us-east5"):
     """Create AnthropicVertex client using default GCP credentials."""
     import anthropic
-    from google.auth import default
-    from google.auth.transport.requests import Request
-
-    credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    credentials.refresh(Request())
-
     return anthropic.AnthropicVertex(
         project_id=project_id,
         region=region,
@@ -29,6 +23,8 @@ def _call(client, prompt: str, max_tokens: int = 1024) -> str:
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": prompt}],
     )
+    if not message.content:
+        raise RuntimeError(f"Claude returned empty content. Stop reason: {message.stop_reason}")
     return message.content[0].text
 
 
@@ -49,8 +45,13 @@ def generate_narrative(analysis: Dict[str, Any], project_id: str, region: str = 
 Write a concise executive summary (3-4 sentences) highlighting what moved, any notable anomalies, and one thing to watch next week.
 Be specific with numbers. Do not use filler phrases.
 
-Data:
-{json.dumps(analysis, indent=2)}
+Week: {analysis['week']} ({analysis['date_range']['start']} to {analysis['date_range']['end']})
+Current metrics by country:
+{json.dumps(analysis['current_summary'], indent=2)}
+Week-on-week changes (%):
+{json.dumps(analysis['vs_last_week'], indent=2)}
+Anomalies:
+{json.dumps(analysis['anomalies'], indent=2)}
 """
 
     trend_prompt = f"""You are an ecommerce analytics expert. Below is {analysis['history_weeks']} weeks of historical performance data plus this week's results.
