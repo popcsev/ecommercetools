@@ -4,10 +4,10 @@ import json
 from typing import Dict, Any
 
 
-MODEL = "claude-sonnet-4-6@20251001"
+MODEL = "claude-sonnet-4-6"
 
 
-def _get_client(project_id: str, region: str = "us-east5"):
+def _get_client(project_id: str, region: str = "global"):
     """Create AnthropicVertex client using default GCP credentials."""
     import anthropic
     return anthropic.AnthropicVertex(
@@ -28,7 +28,7 @@ def _call(client, prompt: str, max_tokens: int = 1024) -> str:
     return message.content[0].text
 
 
-def generate_narrative(analysis: Dict[str, Any], project_id: str, region: str = "us-east5") -> Dict[str, str]:
+def generate_narrative(analysis: Dict[str, Any], project_id: str, region: str = "global") -> Dict[str, str]:
     """Generate executive summary and trend commentary from analysis dict.
 
     Args:
@@ -71,7 +71,7 @@ Current summary:
     }
 
 
-def answer_question(question: str, snapshots_data: list, project_id: str, region: str = "us-east5") -> str:
+def answer_question(question: str, snapshots_data: list, project_id: str, region: str = "global") -> str:
     """Answer a natural language question about historical snapshot data.
 
     Args:
