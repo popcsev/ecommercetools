@@ -26,7 +26,7 @@ def compute_wow_diff(current: pd.DataFrame, previous: pd.DataFrame) -> Dict[str,
                 continue
             prev_val = prev_row[metric]
             cur_val = cur_row[metric]
-            if prev_val == 0:
+            if prev_val == 0 or pd.isna(prev_val):
                 diffs[metric] = None
             else:
                 diffs[metric] = round((cur_val - prev_val) / abs(prev_val) * 100, 1)
